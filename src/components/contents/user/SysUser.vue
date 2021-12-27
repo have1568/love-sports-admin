@@ -155,7 +155,7 @@ export default {
 
     methods: {
         initialize() {
-            this.$axios
+            this.axios
                 .get("/love_sports/love-sports-auth/api/resources/list")
                 .then((response) => {
                     console.log(response.data)

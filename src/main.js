@@ -45,7 +45,7 @@ const initAxios = (_this) => {
     }, function (error) {
         console.log(error);
         console.log(_this);
-        _this.$router.push("/login")
+        //_this.$router.push("/login")
         // Do something with response error
         return Promise.reject(error);
     });

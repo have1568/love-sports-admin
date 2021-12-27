@@ -11,7 +11,7 @@ export const routes = [
     {
         path: '/dashboard',
         name: 'Dashboard',
-        component: () =>import('../components/Dashboard.vue')
+        component: () =>import('../components/contents/Dashboard.vue')
     },
     {
         path: '/token',
@@ -40,6 +40,11 @@ export const routes = [
         path: '/permission/resources',
         name: 'Resources',
         component: () => import('../components/contents/resources/SysResources.vue')
+    },
+    {
+        path: '/permission/user',
+        name: 'User',
+        component: () => import('../components/contents/user/SysUser.vue')
     },
     {
         path: '/404',

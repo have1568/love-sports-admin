@@ -64,7 +64,7 @@
   </v-app>
 </template>
 <script>
-import AppDrawer from "./components/Layout/AppDrawer.vue";
+import AppDrawer from "./components/layout/AppDrawer.vue";
 import {FulfillingSquareSpinner} from "epic-spinners";
 import API from './router/API'
 
