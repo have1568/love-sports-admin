@@ -1,15 +1,17 @@
 <template>
   <!-- App.vue -->
-  <v-app v-if="$route.meta.public != true">
-    <atom-spinner
-          :animation-duration="1000"
-          :size="60"
-          :color="'#ff1d5e'"
-     />
-    <AppDrawer :menus="items" :enable-mini="mini" :principal="principal"></AppDrawer>
+  <v-app v-if="$route.meta.public !== true">
+    <AppDrawer
+        :menus="items"
+        :enable-mini="mini"
+        :principal="principal"
+    ></AppDrawer>
     <v-card class="mx-auto overflow-hidden">
       <v-app-bar elevation="0" app>
-        <v-app-bar-nav-icon @click.stop="mini = !mini">
+        <v-app-bar-nav-icon
+            transition="fab-transition"
+            @click.stop="mini = !mini"
+        >
           <v-icon>{{ toggleNavIcon }}</v-icon>
         </v-app-bar-nav-icon>
         <v-btn icon>
@@ -23,7 +25,6 @@
         <v-btn icon>
           <v-icon>mdi-heart</v-icon>
         </v-btn>
-
         <v-btn icon>
           <v-icon>mdi-dots-vertical</v-icon>
         </v-btn>
@@ -44,77 +45,78 @@
         <strong>Vuetify</strong>
       </v-col>
     </v-footer>
+    <v-overlay
+        ref="SpinnerLoading"
+        :value="Loading"
+        color="#E1F5FE"
+        :z-index="6"
+        :opacity="0.7"
+    >
+      <fulfilling-square-spinner
+          :animation-duration="4000"
+          :size="50"
+          color="#ff1d5e"
+      />
+    </v-overlay>
   </v-app>
   <v-app v-else>
-    <atom-spinner
-          :animation-duration="1000"
-          :size="60"
-          :color="'#ff1d5e'"
-     />
     <router-view></router-view>
   </v-app>
 </template>
 <script>
 import AppDrawer from "./components/Layout/AppDrawer.vue";
-import { AtomSpinner } from 'epic-spinners'
+import {FulfillingSquareSpinner} from "epic-spinners";
+import API from './router/API'
+
 export default {
   components: {
     AppDrawer,
-    AtomSpinner,
+    FulfillingSquareSpinner,
   },
-  name: 'App',
+  name: "App",
   data: () => ({
-    spinnerVisible: true,
+    initialized:false,
+    Loading: false,
     drawer: true,
     items: [],
-    mini: false,
+    mini: true,
     breadcrumbs: [],
     principal: {},
   }),
-  created() {
-    this.initialize();
-    // EventBus.$on('before-request', this.showSpinner);
-    // EventBus.$on('request-error', this.hideSpinner);
-    // EventBus.$on('after-response', this.hideSpinner);
-    // EventBus.$on('response-error', this.hideSpinner);
-  },
   computed: {
     toggleNavIcon() {
       return this.mini
-        ? "mdi-format-indent-increase"
-        : "mdi-format-indent-decrease";
+          ? "mdi-format-indent-increase"
+          : "mdi-format-indent-decrease";
     },
   },
-  beforeDestroy() {
-    // EventBus.$off('before-request', this.showSpinner);
-    // EventBus.$off('request-error', this.hideSpinner);
-    // EventBus.$off('after-response', this.hideSpinner);
-    // EventBus.$off('response-error', this.hideSpinner);
-  },
-  watch: {
-
-  },
   methods: {
+    //获取token
     initialize() {
-      this.$axios.get("/love_sports/love-sports-auth/auth/userinfo")
-        .then((response) => {
-          console.log(response.data)
-          this.principal = response.data.data
-          this.menus = response.data.data.resources
-        })
+      this.initialized = true
+      this.$http.get(API.USERINFO)
+          .then((response) => {
+            console.log(response.data)
+            this.principal = response.data.data
+            this.menus = response.data.data.resources
+          })
     },
 
     createBreadcrumbs() {
+    },
+    showLoading(isShow) {
+      this.Loading = isShow;
+    },
+  },
+  mounted() {
+    this.$bus.$on("showLoading", this.showLoading);
 
-    },
-    showSpinner() {
-      console.log('show spinner');
-      this.spinnerVisible = true;
-    },
-    hideSpinner() {
-      console.log('hide spinner');
-      this.spinnerVisible = false;
+    //如果没有执行初始化方法，则执行方法获取用户信息
+    if (!this.initialized) {
+      this.initialize()
+      return
     }
+    this.$bus.$on("LoginComplete", this.initialize);
 
   },
 };

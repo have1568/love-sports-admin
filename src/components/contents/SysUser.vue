@@ -11,7 +11,7 @@
             <v-toolbar flat>
                 <v-toolbar-title>资源管理</v-toolbar-title>
                 <v-divider class="mx-10" inset vertical></v-divider>
-                  <v-text-field
+                <v-text-field
                     v-model="search"
                     append-icon="mdi-magnify"
                     label="查找"
@@ -19,7 +19,6 @@
                     hide-details
                 ></v-text-field>
                 <v-spacer></v-spacer>
-              
                 <!-- 修改增加 dialog -->
                 <v-dialog v-model="dialog" max-width="900px">
                     <template v-slot:activator="{ on, attrs }">
@@ -156,7 +155,8 @@ export default {
 
     methods: {
         initialize() {
-            this.$axios.get("/love_sports/love-sports-auth/api/resources/list")
+            this.$axios
+                .get("/love_sports/love-sports-auth/api/resources/list")
                 .then((response) => {
                     console.log(response.data)
                     this.resources = response.data.data.content
