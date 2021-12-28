@@ -2,7 +2,7 @@
   <v-col cols="12">
     <v-card tile>
       <v-toolbar flat>
-        <v-toolbar-title>资源管理</v-toolbar-title>
+        <v-toolbar-title>角色管理</v-toolbar-title>
         <v-divider class="mx-10" inset vertical></v-divider>
         <v-text-field
             v-model="search.key.text"
@@ -74,10 +74,10 @@
       </v-data-table>
     </v-card>
     <!-- 修改/创建/删除 dialog -->
-    <SysResourcesAction :actionItem="actionItem"
+    <SysRoleAction :actionItem="actionItem"
                         :is-edit="isEdit"
                         :showEditDialog="showEditDialog"
-                        :dialog="dialogEdit"></SysResourcesAction>
+                        :dialog="dialogEdit"></SysRoleAction>
   </v-col>
 </template>
 
@@ -85,11 +85,11 @@
 
 import API from '@/router/API'
 
-import SysResourcesAction from "@/components/contents/resources/SysResourcesAction";
+import SysRoleAction from "@/components/contents/role/SysRoleAction";
 
 export default {
   components: {
-    SysResourcesAction,
+    SysRoleAction,
   },
   data() {
     return {
@@ -142,12 +142,9 @@ export default {
           sortable: false,
           value: 'id',
         },
-        {text: '名称', value: 'resName', align: 'center'},
-        {text: '路径', value: 'resPath', align: 'center'},
-        {text: '图标', value: 'resIcon'},
-        {text: 'HTTP方法', value: 'httpMethod'},
-        {text: '类型', value: 'resType'},
-        {text: '排序', value: 'resSort'},
+        {text: '角色标识', value: 'roleKey', align: 'center'},
+        {text: '角色名称', value: 'roleName', align: 'center'},
+        {text: '角色状态', value: 'status'},
         {text: '创建时间', value: 'createAt', align: 'center'},
         {text: '操作', value: 'actions', align: 'center', sortable: false},
 
@@ -176,7 +173,7 @@ export default {
         this.loading = false;
         return;
       }
-      this.axios.get(API.RESOURCES_LIST, {params: requestParam})
+      this.axios.get(API.ROLE_LIST, {params: requestParam})
           .then((response) => {
             let res = response.data.data
             this.desserts = res.content

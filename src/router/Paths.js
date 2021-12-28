@@ -47,6 +47,11 @@ export const routes = [
         component: () => import('../components/contents/user/SysUser.vue')
     },
     {
+        path: '/permission/role',
+        name: 'Role',
+        component: () => import('../components/contents/role/SysRole')
+    },
+    {
         path: '/404',
         meta: {
             public: true,
