@@ -29,7 +29,6 @@ export default {
   },
   methods: {
     getTokenAndInfo() {
-      let _this = this;
       this.axios({
         url: API.OAUTH_TOKEN, //请求路径（接口）
         method: "POST", //请求方式

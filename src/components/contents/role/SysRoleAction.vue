@@ -1,6 +1,6 @@
 <template>
-  <v-dialog v-model="dialogStatus" width="900px" :persistent="true">
-    <v-card  class="elevation-0">
+  <v-dialog v-model="showDialog" width="900px" :persistent="true">
+    <v-card class="elevation-0">
       <v-card-title>
         <span class="text-h5">{{ fromTitle }}</span>
       </v-card-title>
@@ -8,7 +8,7 @@
         <v-container>
           <v-row>
             <v-col cols="12" sm="6" md="3">
-              <v-text-field v-model="item.id" label="ID"></v-text-field>
+              <v-text-field disabled v-model="item.id" label="ID"></v-text-field>
             </v-col>
             <v-col cols="12" sm="6" md="3">
               <v-text-field v-model="item.roleKey" label="角色标识"></v-text-field>
@@ -21,127 +21,155 @@
             </v-col>
           </v-row>
 
-            <v-card class="elevation-0">
-              <v-toolbar flat>
-                <v-toolbar-title>选择资源</v-toolbar-title>
-                <v-divider class="mx-10" inset vertical></v-divider>
-              </v-toolbar>
-              <v-divider/>
-              <v-data-table
-
-                  v-model="selected"
-                  :headers="headers"
-                  :items="desserts"
-                  :single-select="singleSelect"
-                  item-key="id"
-                  show-select
-                  class="elevation-1"
-                  :height="550"
-              >
-              </v-data-table>
-            </v-card>
+          <v-card class="elevation-1 overflow-y-auto overflow-x-hidden pa-6" height="600">
+            <v-row>
+              <v-col cols="8">
+                <v-treeview
+                    dense
+                    v-model="selection"
+                    :items="resourcesTree"
+                    :item-key="'id'"
+                    :item-text="'resName'"
+                    selectable
+                    return-object
+                >
+                  <template v-slot:prepend="{ item }">
+                    <v-icon>
+                      {{ item.resIcon }}
+                    </v-icon>
+                  </template>
+                  <template v-slot:append="{ item }">
+                    <v-list-item>
+                      <v-list-item-content>
+                        {{ item.resPath }}
+                      </v-list-item-content>
+                    </v-list-item>
+                  </template>
+                </v-treeview>
+              </v-col>
+              <v-divider vertical></v-divider>
+              <v-col cols="4">
+                <template v-if="!selection||!selection.length">
+                  没有选择资源
+                </template>
+                <template v-else>
+                  <div v-for="node in selection" :key="node.id">
+                    {{ node.resName }}
+                  </div>
+                </template>
+              </v-col>
+            </v-row>
+          </v-card>
 
         </v-container>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn @click="handleCancel">取消</v-btn>
+        <v-btn @click="cancelItemAction()">取消</v-btn>
         <v-btn color="primary" @click="handUpdateItem">保存</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 <script>
-import {ActionItem} from "@/utils/Mixin";
+import {mapMutations, mapState} from 'vuex'
 import API from "@/router/API";
 
 export default {
-  name: "SysResourcesAction",
-  mixins: [ActionItem],
-  props: ['showEditDialog', 'isEdit'],
-
+  name: "SysRoleAction",
   data() {
     return {
-      singleSelect: false,
-      selected: [],
+      hasGetAllowTree: false,
       item: {
-        id: null,
-        createAt: null,
-        createBy: null,
-        delFlag: 'GET',
-        roleKey: null,
-        roleName: null,
-        rolesResources: [],
-        status: null,
+        "id": null,
+        "roleKey": "ROLE_",
+        "roleLevel": 0,
+        "roleName": "",
+        "resources": [],
+        "status":'ACTIVE'
       },
-      //分页显示数据选项
-      totalDesserts: 0, //列表总数
-      desserts: [], // 数据
-      loading: true, //加载中
-      //表头
-      headers: [
-        {
-          text: 'ID',
-          align: 'start',
-          sortable: false,
-          value: 'id',
-        },
-        {text: '名称', value: 'sysResources.resName', align: 'center'},
-        {text: '路径', value: 'sysResources.resPath', align: 'center'},
-        {text: '图标', value: 'sysResources.resIcon'},
-        {text: 'HTTP方法', value: 'sysResources.httpMethod'},
-        {text: '类型', value: 'sysResources.resType', align: 'center'},
+      selection: [{
+        "id": 0,
+        "parentId": 0,
+        "resIcon": "",
+        "resName": ""
+      }
       ],
+      resourcesTree: [],
     }
   },
+  //监测打开弹窗
   watch: {
-    dialog: {
-      immediate: false,
-      handler: function () {
-        this.dialogStatus = this.dialog
-      },
-    },
     actionItem: {
-      immediate: false,
+      deep: true,
       handler: function () {
-        console.log("=============")
-        this.item = this.actionItem
-        console.log(this.item)
-        this.desserts = this.item.rolesResources
-        this.totalDesserts = this.item.rolesResources.length
+        this.handRequiredActionData()
       },
     },
   },
   computed: {
+    ...mapState('ItemActionAbout', ['showDialog', 'isEdit', 'actionItem', 'actionType']),
+    //获取保存的 principal 用户认证信息
+    ...mapState('SessionAbout', ['principal']),
     fromTitle() {
       return this.isEdit ? "修改角色" : "添加角色"
     }
   },
   mounted() {
-
-
+    this.$http.get(API.RESOURCES_ALL_TREE, {params: {userId: this.principal.id}}).then(response => {
+      this.resourcesTree = response.data
+      this.selection = this.actionItem.resources
+    })
   },
-
   methods: {
-    handUpdateItem(){
-      if(this.isEdit){
+    ...mapMutations('ItemActionAbout', ['cancelItemAction']),
+    handUpdateItem() {
+      if (this.isEdit) {
         this.handleEditItem()
       } else {
         this.handleCreateItem()
       }
+      this.cancelItemAction({})
     },
     handleEditItem() {
-      this.$http.post(API.RESOURCES_UPDATE + this.item.id, this.item).then(response => {
-        console.log(response)
+      this.item.resources = this.selection
+      this.$http.post(API.ROLE_UPDATE + this.item.id, this.item).then(response => {
       })
     },
     handleCreateItem() {
-      this.$http.post(API.RESOURCES_SAVE, this.item).then(response => {
-        console.log(response)
+      this.item.resources = this.selection
+      this.$http.post(API.ROLE_SAVE, this.item).then(response => {
       })
     },
-    handleCancel() {
-      this.showEditDialog(false)
+
+    handRequiredActionData() {
+      // 新增 CREATE
+      // 快速新增 CLONE
+      // 删除 DELETE
+      // 编辑 EDIT
+      // 查看 SHOW
+      switch (this.actionType) {
+        case 'CREATE':
+          break;
+        case 'CLONE':
+          console.log("CLONE")
+          this.item = this.actionItem
+          this.item.id = null
+          this.selection = this.actionItem.resources
+          break;
+        case 'DELETE':
+          console.log("DELETE")
+          break;
+        case 'EDIT':
+          console.log("EDIT")
+          this.item = this.actionItem
+          this.selection = this.actionItem.resources
+          break;
+        case 'SHOW':
+          console.log("SHOW")
+          break;
+        default:
+      }
     }
   }
 

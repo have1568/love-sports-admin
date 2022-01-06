@@ -44,12 +44,17 @@ export const routes = [
     {
         path: '/permission/user',
         name: 'User',
-        component: () => import('../components/contents/user/SysUser.vue')
+        component: () => import('../components/contents/user/SysUserInfo')
     },
     {
         path: '/permission/role',
         name: 'Role',
         component: () => import('../components/contents/role/SysRole')
+    },
+    {
+        path: '/system/app',
+        name: 'Client',
+        component: () => import('../components/contents/client/Client')
     },
     {
         path: '/404',

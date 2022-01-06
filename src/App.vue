@@ -6,30 +6,30 @@
         :enable-mini="mini"
         :principal="principal"
     ></AppDrawer>
-    <v-card class="mx-auto overflow-hidden">
-      <v-app-bar elevation="0" app>
-        <v-app-bar-nav-icon
-            transition="fab-transition"
-            @click.stop="mini = !mini"
-        >
-          <v-icon>{{ toggleNavIcon }}</v-icon>
-        </v-app-bar-nav-icon>
-        <v-btn icon>
-          <v-icon>mdi-home</v-icon>
-        </v-btn>
-        <v-breadcrumbs large :items="breadcrumbs"></v-breadcrumbs>
-        <v-spacer></v-spacer>
-        <v-btn icon>
-          <v-icon>mdi-magnify</v-icon>
-        </v-btn>
-        <v-btn icon>
-          <v-icon>mdi-heart</v-icon>
-        </v-btn>
-        <v-btn icon>
-          <v-icon>mdi-dots-vertical</v-icon>
-        </v-btn>
-      </v-app-bar>
-    </v-card>
+
+    <v-app-bar elevation="0" app dark color="blue" class="border-radius">
+      <v-app-bar-nav-icon
+          transition="fab-transition"
+          @click.stop="mini = !mini"
+      >
+        <v-icon>{{ toggleNavIcon }}</v-icon>
+      </v-app-bar-nav-icon>
+      <v-btn icon>
+        <v-icon>mdi-home</v-icon>
+      </v-btn>
+      <v-breadcrumbs large :items="breadcrumbs"></v-breadcrumbs>
+      <v-spacer></v-spacer>
+      <v-btn icon>
+        <v-icon>mdi-magnify</v-icon>
+      </v-btn>
+      <v-btn icon>
+        <v-icon>mdi-heart</v-icon>
+      </v-btn>
+      <v-btn icon>
+        <v-icon>mdi-dots-vertical</v-icon>
+      </v-btn>
+    </v-app-bar>
+
 
     <!-- 根据应用组件来调整你的内容 -->
     <v-main>
@@ -39,7 +39,7 @@
         <router-view></router-view>
       </v-container>
     </v-main>
-    <v-footer padless>
+    <v-footer padless color="white">
       <v-col class="text-center" cols="12">
         {{ new Date().getFullYear() }} —
         <strong>Vuetify</strong>
@@ -58,6 +58,19 @@
           color="#ff1d5e"
       />
     </v-overlay>
+    <v-snackbar v-model="snackbar.show" app :timeout="snackbar.timeout" :color="snackbar.color" :multi-line="true"
+                :right="true">
+      {{ snackbar.text }}
+      <template v-slot:action="{ attrs }">
+        <v-btn
+            text
+            v-bind="attrs"
+            @click="snackbar.show = false"
+        >
+          关闭
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-app>
   <v-app v-else>
     <router-view></router-view>
@@ -68,6 +81,8 @@ import AppDrawer from "./components/layout/AppDrawer.vue";
 import {FulfillingSquareSpinner} from "epic-spinners";
 import API from './router/API'
 
+import {mapMutations} from "vuex";
+
 export default {
   components: {
     AppDrawer,
@@ -75,13 +90,21 @@ export default {
   },
   name: "App",
   data: () => ({
-    initialized:false,
+    initialized: false,
     Loading: false,
     drawer: true,
     items: [],
     mini: true,
     breadcrumbs: [],
     principal: {},
+    snackbar: {
+      show: false,
+      code: 200,
+      text: '请求错误',
+      timeout: 2000,
+      color: "red"
+    }
+
   }),
   computed: {
     toggleNavIcon() {
@@ -91,14 +114,15 @@ export default {
     },
   },
   methods: {
-    //获取token
+    ...mapMutations('SessionAbout', ['storePrincipal']),
+    //获取用户信息
     initialize() {
       this.initialized = true
       this.$http.get(API.USERINFO)
           .then((response) => {
-            console.log(response.data)
-            this.principal = response.data.data
-            this.menus = response.data.data.resources
+            this.principal = response.data
+            this.menus = response.data.resources
+            this.storePrincipal(this.principal)
           })
     },
 
@@ -107,15 +131,21 @@ export default {
     showLoading(isShow) {
       this.Loading = isShow;
     },
+
+    showAxiosMessage(snackbar) {
+      this.snackbar = snackbar;
+    },
   },
   mounted() {
     this.$bus.$on("showLoading", this.showLoading);
+    this.$bus.$on("showAxiosMessage", this.showAxiosMessage);
 
     //如果没有执行初始化方法，则执行方法获取用户信息
     if (!this.initialized) {
       this.initialize()
       return
     }
+    //登录完成之后再获取用户信息
     this.$bus.$on("LoginComplete", this.initialize);
 
   },

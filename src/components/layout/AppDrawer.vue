@@ -1,19 +1,19 @@
 <template>
   <v-navigation-drawer
       v-model="drawer"
-      :mini-variant.sync="enableMini"
+      :mini-variant.sync="mini"
       mini-variant-width="80"
       width="240"
       mobileBreakpoint="720"
       app
+      elevation="0"
   >
-    <v-list>
-      <v-list-item class="px-2">
+    <v-list class="pb-0">
+      <v-list-item>
         <v-list-item-avatar>
           <v-img src="https://randomuser.me/api/portraits/women/85.jpg"></v-img>
         </v-list-item-avatar>
       </v-list-item>
-
       <v-list-item link>
         <v-list-item-content>
           <v-list-item-title class="text-h6">{{ principal.nickName }}</v-list-item-title>
@@ -24,6 +24,7 @@
     <v-divider></v-divider>
     <v-list>
       <v-list-group
+          v-show="item.resType == 'MENU'"
           transition="fab-transition"
           v-for="item in principal.resources"
           :key="item.id"
@@ -40,6 +41,7 @@
             v-for="child in item.children"
             :key="child.resName"
             :to="child.resPath"
+            class="pl-7"
         >
           <v-list-item-icon>
             <v-icon>{{ child.resIcon }}</v-icon>
@@ -64,15 +66,18 @@ export default {
       type: Array,
     },
     principal: {},
-    prefix: {
-      type: String,
-      default: () => "",
+  },
+  watch: {
+    enableMini: function () {
+      this.mini = this.enableMini
     },
   },
-  data: () => ({
-    drawer: true,
-
-  }),
+  data() {
+    return {
+      mini: true,
+      drawer: true
+    }
+  }
 }
 </script>
 <style>
