@@ -4,9 +4,6 @@ import VueCookies from 'vue-cookies';
 import {routes} from './Paths'
 Vue.use(VueRouter)
 Vue.use(VueCookies)
-console.log("Router Index")
-
-
 
 const router = new VueRouter({
     routes,

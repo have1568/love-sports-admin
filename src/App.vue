@@ -6,7 +6,6 @@
         :enable-mini="mini"
         :principal="principal"
     ></AppDrawer>
-
     <v-app-bar elevation="0" app dark color="blue" class="border-radius">
       <v-app-bar-nav-icon
           transition="fab-transition"
@@ -62,13 +61,7 @@
                 :right="true">
       {{ snackbar.text }}
       <template v-slot:action="{ attrs }">
-        <v-btn
-            text
-            v-bind="attrs"
-            @click="snackbar.show = false"
-        >
-          关闭
-        </v-btn>
+        <v-btn text v-bind="attrs" @click="snackbar.show = false">关闭</v-btn>
       </template>
     </v-snackbar>
   </v-app>
@@ -124,9 +117,6 @@ export default {
             this.menus = response.data.resources
             this.storePrincipal(this.principal)
           })
-    },
-
-    createBreadcrumbs() {
     },
     showLoading(isShow) {
       this.Loading = isShow;

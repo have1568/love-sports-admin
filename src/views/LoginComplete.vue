@@ -24,7 +24,6 @@ export default {
     FulfillingSquareSpinner,
   },
   created() {
-    console.log("创建完成");
     this.getTokenAndInfo();
   },
   methods: {
@@ -40,7 +39,7 @@ export default {
           code: this.$route.query.code,
           grant_type: "authorization_code",
           redirect_uri: "http://localhost:8080/token",
-          scope: "all",
+          scope: this.$route.query.scope,
         }),
       }).then((response) => {
         console.log("获取token成功");

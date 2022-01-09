@@ -11,7 +11,7 @@ export const routes = [
     {
         path: '/dashboard',
         name: 'Dashboard',
-        component: () =>import('../components/contents/Dashboard.vue')
+        component: () => import('../components/contents/Dashboard.vue')
     },
     {
         path: '/token',
@@ -31,9 +31,7 @@ export const routes = [
     },
     {
         path: '/login', redirect: to => {
-            window.location.href = "http://localhost:8081/oauth/authorize?client_id=love-sports-admin&scope=all&response_type=code&redirect_uri=http://localhost:8080/token"
-            // 方法接收 目标路由 作为参数
-            // return 重定向的 字符串路径/路径对象
+            window.location.href = "http://localhost:8081/oauth/authorize?client_id=love-sports-admin&scope=userinfo%20role%20resources&response_type=code&redirect_uri=http://localhost:8080/token"
         }
     },
     {
@@ -62,11 +60,7 @@ export const routes = [
             public: true,
         },
         name: 'NotFound',
-        component: () => import(
-            /* webpackChunkName: "routes" */
-            /* webpackMode: "lazy-once" */
-            `@/views/NotFound.vue`
-            )
+        component: () => import(`@/views/NotFound.vue`)
     },
     {
         path: '/403',
@@ -74,11 +68,7 @@ export const routes = [
             public: true,
         },
         name: 'AccessDenied',
-        component: () => import(
-            /* webpackChunkName: "routes" */
-            /* webpackMode: "lazy-once" */
-            `@/views/Deny.vue`
-            )
+        component: () => import(`@/views/Deny.vue`)
     },
     {
         path: '/500',
@@ -86,22 +76,6 @@ export const routes = [
             public: true,
         },
         name: 'ServerError',
-        component: () => import(
-            /* webpackChunkName: "routes" */
-            /* webpackMode: "lazy-once" */
-            `@/views/Error.vue`
-            )
+        component: () => import( `@/views/Error.vue`)
     },
-    // {
-    //   path: '/login',
-    //   meta: {
-    //     public: true,
-    //   },
-    //   name: 'Login',
-    //   component: () => import(
-    //     /* webpackChunkName: "routes" */
-    //     /* webpackMode: "lazy-once" */
-    //     `@/views/Login.vue`
-    //   )
-    // },
 ]

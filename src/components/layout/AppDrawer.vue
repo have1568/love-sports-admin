@@ -26,7 +26,7 @@
       <v-list-group
           v-show="item.resType == 'MENU'"
           transition="fab-transition"
-          v-for="item in principal.resources"
+          v-for="item in resources"
           :key="item.id"
           v-model="item.active"
           :prepend-icon="item.resIcon"
@@ -76,6 +76,14 @@ export default {
     return {
       mini: true,
       drawer: true
+    }
+  },
+  computed: {
+    resources() {
+      let resources = this.principal.resources;
+      return resources.sort((a, b) => {
+        return a.resSort - b.resSort;
+      })
     }
   }
 }
