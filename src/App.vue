@@ -38,7 +38,7 @@
         <router-view></router-view>
       </v-container>
     </v-main>
-    <v-footer padless color="white">
+    <v-footer  app padless color="white">
       <v-col class="text-center" cols="12">
         {{ new Date().getFullYear() }} —
         <strong>Vuetify</strong>

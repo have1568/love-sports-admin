@@ -81,9 +81,6 @@ export default {
           text: null,
           field: 'resName'
         },
-        resType: null,
-        httpMethod: null
-
       },
       //分页显示数据选项
       totalDesserts: 0, //列表总数
@@ -161,6 +158,7 @@ export default {
     },
     handleApplyFilter() {
       if ((this.search.key.field && this.search.key.text) || this.search.resType || this.search.httpMethod) {
+        this.pageOptions.page = 1;
         this.initialize()
       }
     },

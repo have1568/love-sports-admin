@@ -81,9 +81,14 @@ export default {
   computed: {
     resources() {
       let resources = this.principal.resources;
-      return resources.sort((a, b) => {
-        return a.resSort - b.resSort;
-      })
+      if (resources) {
+        return resources.sort((a, b) => {
+          return a.resSort - b.resSort;
+        })
+      }
+
+      return [];
+
     }
   }
 }
