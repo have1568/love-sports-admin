@@ -9,6 +9,15 @@ export const routes = [
         }
     },
     {
+        path: '/',
+        meta: {
+            public: true,
+        },
+        redirect: {
+            path: '/login'
+        }
+    },
+    {
         path: '/dashboard',
         name: 'Dashboard',
         component: () => import('../components/contents/Dashboard.vue')

@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="showDialog" max-width="900px" :persistent="true">
+  <v-dialog v-show="showDialog" v-model="showDialog" max-width="900px" :persistent="true">
     <v-card>
       <v-card-title>
         <span class="text-h5">{{ fromTitle }}</span>
@@ -47,7 +47,6 @@
                   :items="parents"
                   :item-text="'resName'"
                   :item-value="'id'"
-                  @focus="getParents"
               >
               </v-select>
             </v-col>
@@ -58,7 +57,6 @@
                   :items="clients"
                   :item-text="'clientName'"
                   :item-value="'clientId'"
-                  @focus="getClients"
               ></v-select>
             </v-col>
           </v-row>
@@ -119,6 +117,17 @@ export default {
         }
       },
     },
+
+    showDialog:{
+      immediate: false,
+      handler: function () {
+        if(this.showDialog){
+          console.log(this.showDialog)
+          this.getParents();
+          this.getClients();
+        }
+      },
+    }
   },
   methods: {
     ...mapMutations('ItemActionAbout', ['cancelItemAction']),
@@ -140,18 +149,12 @@ export default {
       })
     },
     getParents() {
-      if (this.hasGetParents) {
-        return
-      }
       this.$http.get(API.RESOURCES_ALL).then(response => {
         this.parents = response.data
         this.hasGetParents = true;
       })
     },
     getClients() {
-      if (this.hasGetClients) {
-        return
-      }
       this.$http.get(API.CLIENT_ALL).then(response => {
         this.clients = response.data;
         this.hasGetClients = true;

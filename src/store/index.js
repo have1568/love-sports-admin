@@ -62,7 +62,7 @@ const ItemActionOptions = {
 }
 
 /**
- * 记录当前已认证的用户信息和token
+ * 记录当前已认证的用户信息、token和菜单
  */
 const SessionOptions = {
     namespaced: true,
@@ -70,7 +70,8 @@ const SessionOptions = {
     mutations: {
         storePrincipal(state, value) {
             state.principal = value
-        }
+        },
+
     },
     state: {
         principal: {},

@@ -68,7 +68,7 @@
           <v-icon class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
         </template>
         <template v-slot:no-data>
-          <v-btn color="primary" @click="initialize">无数据</v-btn>
+          <v-btn color="primary" @click="initialize">无数据重置</v-btn>
         </template>
       </v-data-table>
     </v-card>

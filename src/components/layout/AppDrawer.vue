@@ -23,34 +23,49 @@
     </v-list>
     <v-divider></v-divider>
     <v-list>
-      <v-list-group
-          v-show="item.resType == 'MENU'"
-          transition="fab-transition"
-          v-for="item in resources"
-          :key="item.id"
-          v-model="item.active"
-          :prepend-icon="item.resIcon"
-          no-action
-      >
-        <template v-slot:activator v-if="item.resType == 'MENU'">
+      <div v-for="(item, index) in resources" :key="index">
+
+        <v-list-item
+            :key="item.resName"
+            :to="item.resPath"
+            v-if="isShowItem(item)"
+        >
+          <v-list-item-icon>
+            <v-icon>{{ item.resIcon }}</v-icon>
+          </v-list-item-icon>
           <v-list-item-content>
             <v-list-item-title v-text="item.resName"></v-list-item-title>
           </v-list-item-content>
-        </template>
-        <v-list-item
-            v-for="child in item.children"
-            :key="child.resName"
-            :to="child.resPath"
-            class="pl-7"
-        >
-          <v-list-item-icon>
-            <v-icon>{{ child.resIcon }}</v-icon>
-          </v-list-item-icon>
-          <v-list-item-content v-if="child.resType == 'MENU'">
-            <v-list-item-title v-text="child.resName"></v-list-item-title>
-          </v-list-item-content>
         </v-list-item>
-      </v-list-group>
+        <v-list-group
+            v-else
+            transition="fab-transition"
+            :key="item.id"
+            v-model="item.active"
+            :prepend-icon="item.resIcon"
+            no-action
+
+        >
+          <template v-slot:activator>
+            <v-list-item-content>
+              <v-list-item-title v-text="item.resName"></v-list-item-title>
+            </v-list-item-content>
+          </template>
+          <v-list-item
+              v-for="child in item.children"
+              :key="child.resName"
+              :to="child.resPath"
+              class="pl-7"
+          >
+            <v-list-item-icon>
+              <v-icon>{{ child.resIcon }}</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title v-text="child.resName"></v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-group>
+      </div>
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -78,6 +93,11 @@ export default {
       drawer: true
     }
   },
+  methods: {
+    isShowItem(item) {
+      return item.children < 1
+    }
+  },
   computed: {
     resources() {
       let resources = this.principal.resources;
@@ -86,12 +106,9 @@ export default {
           return a.resSort - b.resSort;
         })
       }
-
       return [];
 
     }
   }
 }
 </script>
-<style>
-</style>

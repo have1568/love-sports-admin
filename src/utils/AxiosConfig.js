@@ -32,6 +32,7 @@ export const initAxiosConfig = (Vue, router) => {
         Vue.prototype.$bus.$emit("showLoading", false);
         return response;
     }, function (err) {
+        console.error(err)
         //==============  错误处理  ====================
         if (err && err.response) {
             switch (err.response.status) {

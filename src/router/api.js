@@ -7,7 +7,8 @@ export default {
 
 
     RESOURCES_LIST: BASE_PATH + "/love-sports-auth/api/resources/list",
-    RESOURCES_ALL: BASE_PATH + "/love-sports-auth/api/resources/all",
+    RESOURCES_ALL: BASE_PATH + "/love-sports-auth/api/resources/list",
+    RESOURCES_USER_MENU_TREE: BASE_PATH + "/love-sports-auth/api/resources/user/menu/tree",
     RESOURCES_ALL_TREE: BASE_PATH + "/love-sports-auth/api/resources/all/tree",
     RESOURCES_SAVE: BASE_PATH + "/love-sports-auth/api/resources/save",
     RESOURCES_UPDATE: BASE_PATH + "/love-sports-auth/api/resources/update/",
