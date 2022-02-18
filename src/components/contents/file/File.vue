@@ -1,24 +1,33 @@
 <template>
   <v-col cols="12">
-    <v-card tile class="elevation-0">
-      <v-toolbar flat>
-        <v-toolbar-title>资源管理</v-toolbar-title>
+    <v-card tile>
+      <v-toolbar flat class="mt-5">
+        <v-toolbar-title>文件管理</v-toolbar-title>
+        <v-divider class="mx-10" inset vertical></v-divider>
+        <v-toolbar-items>
+          <v-autocomplete v-model="search.key.field"
+                          height="50"
+                          dense
+                          placeholder="搜索项"
+                          cache-items
+                          :items="[{text:'昵称',value:'nickName'},{text:'账号',value:'username'},{text:'手机号',value:'phoneNumber'}]"/>
+        </v-toolbar-items>
         <v-divider class="mx-10" inset vertical></v-divider>
         <v-text-field
             v-model="search.key.text"
             text
             solo
             flat
-            :prepend-icon="showFilter ? 'mdi-filter-variant-plus' : 'mdi-filter-variant'"
-            append-icon="mdi-magnify"
-            placeholder="搜索项关键字"
+            placeholder="搜索昵称、账号、手机号"
             hide-details
             clearable
             @keyup.enter="handleApplyFilter"
             @click:append="handleApplyFilter"
-            @click:prepend="showFilter = !showFilter"
             @click:clear="handleClear"
         />
+        <v-btn icon @click="handleApplyFilter">
+          <v-icon>mdi-magnify</v-icon>
+        </v-btn>
         <v-btn icon @click="initialize">
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
@@ -27,53 +36,28 @@
         </v-btn>
       </v-toolbar>
       <v-divider/>
-      <v-card color="white" v-show="showFilter" flat class="grey lighten-4">
-        <v-card-text>
-          <v-row>
-            <v-col :cols="4">
-              <v-autocomplete v-model="search.key.field"
-                              :items="[{text:'名称',value:'resName'},{text:'路径',value:'resPath'}]" label="搜索项"/>
-            </v-col>
-            <v-col :cols="4">
-              <v-autocomplete v-model="search.resType" :items="[{text:'菜单',value:'MENU'},{text:'API',value:'API'}]"
-                              label="资源类型"/>
-            </v-col>
-            <v-col :cols="4">
-              <v-autocomplete v-model="search.httpMethod" :items="['GET','POST']" label="HTTP方法"/>
-            </v-col>
-          </v-row>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn tile color="secondary" @click="handleResetFilter">清空</v-btn>
-          <v-btn tile color="info" @click="handleApplyFilter">应用</v-btn>
-        </v-card-actions>
-      </v-card>
       <v-data-table
           :headers="headers"
           :items="desserts"
           :search="search.key.text"
-          :footer-props="{'items-per-page-options':[10,20,50]}"
+          :footer-props="{'items-per-page-options':[10,20,30]}"
           :options.sync="pageOptions"
           :server-items-length="totalDesserts"
           :loading="loading"
           class="elevation-1"
       >
-        <!--  图标插槽   -->
-        <template v-slot:item.resIcon={item}>
-          <v-icon>{{ item.resIcon }}</v-icon>
-        </template>
         <!-- 操作列 -->
         <template v-slot:item.actions={item}>
-          <v-icon class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
+          <v-icon class="mr-4" @click="editItem(item)">mdi-file-eye</v-icon>
+          <v-icon  class="mr-4" @click="editItem(item)">mdi-pencil</v-icon>
         </template>
         <template v-slot:no-data>
-          <v-btn color="primary" @click="initialize">无数据重置</v-btn>
+          <v-btn color="primary" @click="initialize">无数据</v-btn>
         </template>
       </v-data-table>
     </v-card>
     <!-- 修改/创建/删除 dialog -->
-    <SysResourcesAction/>
+    <SysUserinfoAction/>
   </v-col>
 </template>
 <script>
@@ -82,8 +66,9 @@ import API from '@/router/API'
 import {mapMutations, mapState} from 'vuex'
 
 export default {
+  name:"File",
   components: {
-    SysResourcesAction: () => import('@/components/contents/resources/SysResourcesAction'),
+    SysUserinfoAction: () => import('@/components/contents/user/SysUserinfoAction'),
   },
   computed: {
     ...mapState("ItemActionAbout", ['actionItem', 'showDialog'])
@@ -98,9 +83,6 @@ export default {
           text: null,
           field: 'resName'
         },
-        resType: null,
-        httpMethod: null
-
       },
       //分页显示数据选项
       totalDesserts: 0, //列表总数
@@ -127,13 +109,12 @@ export default {
           sortable: false,
           value: 'id',
         },
-        {text: '名称', value: 'resName', align: 'center'},
-        {text: '路径', value: 'resPath', align: 'center'},
-        {text: '资源ID', value: 'clientId', },
-        {text: '图标', value: 'resIcon'},
-        {text: 'HTTP方法', value: 'httpMethod'},
-        {text: '类型', value: 'resType'},
-        {text: '排序', value: 'resSort'},
+        {text: '文件名称', value: 'fileOriginalName', align: 'center'},
+        {text: '文件类型', value: 'contentType', align: 'center'},
+        {text: '扩展名', value: 'extension'},
+        {text: '系统名称', value: 'fileName'},
+        {text: '文件大小/KB', value: 'fileSize'},
+        {text: '创建者', value: 'createBy', align: 'center'},
         {text: '创建时间', value: 'createAt', align: 'center'},
         {text: '操作', value: 'actions', align: 'center', sortable: false},
 
@@ -161,33 +142,27 @@ export default {
       if (this.search.key.field && this.search.key.text) {
         requestParam[this.search.key.field] = this.search.key.text;
       }
-      if (this.search.resType) {
-        requestParam.resType = this.search.resType;
-      }
-      if (this.search.httpMethod) {
-        requestParam.httpMethod = this.search.httpMethod;
-      }
       //解决重复点击的BUG,参照官方的实例修改
       if (this.pageOptions.sortBy.length === 0) {
         this.loading = false;
         return;
       }
-      this.axios.get(API.RESOURCES_LIST, {params: requestParam})
+      this.axios.get(API.FILE_LIST, {params: requestParam})
           .then((response) => {
             let res = response.data
             this.desserts = res.content
             this.totalDesserts = res.totalElements
             this.loading = false;
+
           })
     },
     handleApplyFilter() {
       if ((this.search.key.field && this.search.key.text) || this.search.resType || this.search.httpMethod) {
+        this.pageOptions.page = 1;
         this.initialize()
       }
     },
     handleResetFilter() {
-      this.search.resType = null
-      this.search.httpMethod = null
       this.search.key = {}
     },
     handleClear() {

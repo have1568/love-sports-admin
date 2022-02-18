@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-show="showDialog" v-model="showDialog" max-width="900px" :persistent="true">
+  <v-dialog v-model="showDialog" max-width="900px">
     <v-card>
       <v-card-title>
         <span class="text-h5">{{ fromTitle }}</span>
@@ -47,6 +47,7 @@
                   :items="parents"
                   :item-text="'resName'"
                   :item-value="'id'"
+                  @focus="getParents"
               >
               </v-select>
             </v-col>
@@ -57,6 +58,7 @@
                   :items="clients"
                   :item-text="'clientName'"
                   :item-value="'clientId'"
+                  @focus="getClients"
               ></v-select>
             </v-col>
           </v-row>
@@ -76,9 +78,11 @@ import API from "@/router/API";
 import {mapMutations, mapState} from 'vuex'
 
 export default {
-  name: "SysResourcesAction",
+  name: "FileAction",
   data() {
     return {
+      hasGetParents: false,
+      hasGetClients: false,
       parents: [],
       clients: [],
       rootItem: [
@@ -103,27 +107,21 @@ export default {
   computed: {
     ...mapState('ItemActionAbout', ['showDialog', 'isEdit', 'actionItem', 'actionType']),
     fromTitle() {
-      return this.isEdit ? "修改资源" : "添加资源"
+      return this.isEdit ? "修改文件" : "上传文件"
     }
   },
   watch: {
-    showDialog:{
+    actionItem: {
       immediate: false,
       handler: function () {
-        if(this.showDialog){
-          console.log(this.showDialog)
-          if (this.isEdit) {
-            this.item = this.actionItem
-          }
-          this.getParents();
-          this.getClients();
+        if (this.isEdit) {
+          this.item = this.actionItem
         }
       },
-    }
+    },
   },
   methods: {
     ...mapMutations('ItemActionAbout', ['cancelItemAction']),
-
     handUpdateItem() {
       if (this.isEdit) {
         this.handleEditItem()
@@ -142,14 +140,21 @@ export default {
       })
     },
     getParents() {
+      if (this.hasGetParents) {
+        return
+      }
       this.$http.get(API.RESOURCES_ALL).then(response => {
         this.parents = response.data
-
+        this.hasGetParents = true;
       })
     },
     getClients() {
+      if (this.hasGetClients) {
+        return
+      }
       this.$http.get(API.CLIENT_ALL).then(response => {
         this.clients = response.data;
+        this.hasGetClients = true;
       })
     },
 

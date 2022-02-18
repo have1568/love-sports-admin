@@ -11,8 +11,6 @@
         <v-btn icon @click="createItem({})">
           <v-icon>mdi-plus</v-icon>
         </v-btn>
-
-
       </v-toolbar>
       <v-divider/>
       <v-data-table

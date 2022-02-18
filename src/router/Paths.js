@@ -64,6 +64,17 @@ export const routes = [
         component: () => import('../components/contents/client/Client')
     },
     {
+        path: '/system/file',
+        name: 'File',
+        component: () => import('../components/contents/file/File')
+    },
+
+    {
+        path: '/flow/design',
+        name: 'FlowDesign',
+        component: () => import('../components/contents/flow/workflow/index')
+    },
+    {
         path: '/404',
         meta: {
             public: true,

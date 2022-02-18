@@ -71,7 +71,6 @@ const SessionOptions = {
         storePrincipal(state, value) {
             state.principal = value
         },
-
     },
     state: {
         principal: {},
@@ -79,9 +78,32 @@ const SessionOptions = {
     },
 }
 
+/**
+ * 主题样式等有关APP设置的store
+ */
+const AppSettingOptions = {
+    namespaced: true,
+    actions: {},
+    mutations: {
+        toggleDrawer(state, value) {
+            state.drawer = value
+        },
+        toggleMiniDrawer(state, value) {
+            state.mini = value
+        },
+
+    },
+    state: {
+        drawer: true,
+        mini: true
+    },
+}
+
+
 export default new Vuex.Store({
     modules: {
         ItemActionAbout: ItemActionOptions,
-        SessionAbout: SessionOptions
+        SessionAbout: SessionOptions,
+        AppSettingAbout:AppSettingOptions
     }
 })

@@ -1,3 +1,4 @@
+//用于网关的路径
 const BASE_PATH = "/love_sports"
 
 export default {
@@ -7,7 +8,7 @@ export default {
 
 
     RESOURCES_LIST: BASE_PATH + "/love-sports-auth/api/resources/list",
-    RESOURCES_ALL: BASE_PATH + "/love-sports-auth/api/resources/list",
+    RESOURCES_ALL: BASE_PATH + "/love-sports-auth/api/resources/all",
     RESOURCES_USER_MENU_TREE: BASE_PATH + "/love-sports-auth/api/resources/user/menu/tree",
     RESOURCES_ALL_TREE: BASE_PATH + "/love-sports-auth/api/resources/all/tree",
     RESOURCES_SAVE: BASE_PATH + "/love-sports-auth/api/resources/save",
@@ -16,6 +17,7 @@ export default {
     ROLE_LIST: BASE_PATH + "/love-sports-auth/api/role/list",
     ROLE_ALL: BASE_PATH + "/love-sports-auth/api/role/all",
     ROLE_SAVE: BASE_PATH + "/love-sports-auth/api/role/save",
+    ROLE_GET_ONE: BASE_PATH + "/love-sports-auth/api/role/get/",
     ROLE_UPDATE: BASE_PATH + "/love-sports-auth/api/role/update/",
 
 
@@ -27,4 +29,11 @@ export default {
     CLIENT_ALL: BASE_PATH + "/love-sports-auth/api/client/all",
     CLIENT_SAVE: BASE_PATH + "/love-sports-auth/api/client/save",
     CLIENT_UPDATE: BASE_PATH + "/love-sports-auth/api/client/update/",
+
+
+    FILE_LIST: BASE_PATH + "/love-sports-file/api/fileDetails/list",
+    FILE_ALL: BASE_PATH + "/love-sports-file/api/fileDetails/all",
+    FILE_SAVE: BASE_PATH + "/love-sports-file/api/fileDetails/save",
+    FILE_GET_ONE: BASE_PATH + "/love-sports-file/fileDetails/get/",
+    FILE_UPDATE: BASE_PATH + "/love-sports-file/api/fileDetails/update/",
 }

@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="showDialog" width="900px" :persistent="true">
+  <v-dialog  v-model="showDialog" width="900px" :persistent="true">
     <v-card class="elevation-0">
       <v-card-title>
         <span class="text-h5">{{ fromTitle }}</span>
@@ -65,7 +65,7 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn @click="cancelItemAction()">取消</v-btn>
+        <v-btn @click="cancelItemAction">取消</v-btn>
         <v-btn color="primary" @click="handUpdateItem">保存</v-btn>
       </v-card-actions>
     </v-card>
@@ -79,14 +79,13 @@ export default {
   name: "SysRoleAction",
   data() {
     return {
-      hasGetAllowTree: false,
       item: {
         "id": null,
         "roleKey": "ROLE_",
         "roleLevel": 0,
         "roleName": "",
         "resources": [],
-        "status":'ACTIVE'
+        "status": 'ACTIVE'
       },
       selection: [{
         "id": 0,
@@ -100,12 +99,14 @@ export default {
   },
   //监测打开弹窗
   watch: {
-    actionItem: {
-      deep: true,
+    showDialog: {
+      immediate: false,
       handler: function () {
-        this.handRequiredActionData()
+        if (this.showDialog) {
+          this.handRequiredActionData()
+        }
       },
-    },
+    }
   },
   computed: {
     ...mapState('ItemActionAbout', ['showDialog', 'isEdit', 'actionItem', 'actionType']),
@@ -142,7 +143,16 @@ export default {
       })
     },
 
+    getSysRole() {
+      this.$http.get(API.ROLE_GET_ONE + this.actionItem.id).then(response => {
+        this.item = response.data
+        this.selection = response.data.resources
+      })
+    },
+
     handRequiredActionData() {
+
+
       // 新增 CREATE
       // 快速新增 CLONE
       // 删除 DELETE
@@ -162,8 +172,7 @@ export default {
           break;
         case 'EDIT':
           console.log("EDIT")
-          this.item = this.actionItem
-          this.selection = this.actionItem.resources
+          this.getSysRole();
           break;
         case 'SHOW':
           console.log("SHOW")

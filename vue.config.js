@@ -7,8 +7,17 @@ module.exports = {
         pathRewrite: {
           '^/love_sports/love-sports-auth': '/'
         }
-      }
-    }
+
+      },
+      '/love_sports/love-sports-file': {
+        target: 'http://localhost:8083',
+        changeOrigin: false,
+        pathRewrite: {
+          '^/love_sports/love-sports-file': '/'
+        },
+      },
+    },
+
   },
   transpileDependencies: [
     'vuetify'

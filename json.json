@@ -1,6 +1,17 @@
 {
-  "color": "#1F7087",
-  "src": "https://cdn.vuetifyjs.com/images/cards/foster.jpg",
-  "title": "后台管理",
-  "subtitle": "公司内部使用"
+  id: "f9e8c25a-a402-46f8-8584-9bc23c7caa53",
+  contentType: "application/pdf"
+  createAt: "2022-02-17T23:49:58.591"
+  createBy: "have1568"
+  delFlag: false
+  extension: "pdf"
+  fileDownloadUri: "http://localhost:8083/downloadFile/f9e8c25a-a402-46f8-8584-9bc23c7caa53"
+  fileName: "f9e8c25a-a402-46f8-8584-9bc23c7caa53.pdf"
+  fileOriginalName: "Spring Data JPA原理与实战.pdf"
+  fileSize: 35836677
+  id: "f9e8c25a-a402-46f8-8584-9bc23c7caa53"
+  targetLocation: ""
+  updateAt: "2022-02-17T23:49:58.591"
+  updateBy: "have1568"
+  version: 0
 }
